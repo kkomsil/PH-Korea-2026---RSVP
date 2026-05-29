@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PH Korea 2026 · 사교행사 RSVP</title>
+<style>
+  :root{
+    --primary:#1a4f8b; --primary-dark:#143d6b; --accent:#2e7d6b;
+    --bg:#f4f6f9; --card:#ffffff; --line:#e2e8f0; --text:#1f2937;
+    --muted:#6b7280; --danger:#c0392b; --ok:#2e7d6b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",Helvetica,Arial,sans-serif;
+    line-height:1.6;-webkit-text-size-adjust:100%}
+  .wrap{max-width:640px;margin:0 auto;padding:20px 16px 60px}
+  .header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;border-radius:16px;padding:28px 24px;margin-bottom:20px;
+    box-shadow:0 6px 18px rgba(20,61,107,.18)}
+  .header .badge{display:inline-block;font-size:12px;letter-spacing:.08em;
+    background:rgba(255,255,255,.18);padding:4px 10px;border-radius:20px;margin-bottom:10px}
+  .header h1{margin:0 0 6px;font-size:21px;line-height:1.35}
+  .header p{margin:0;font-size:14px;opacity:.92}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .card h2{font-size:16px;margin:0 0 4px;color:var(--primary)}
+  .card .sub{font-size:13px;color:var(--muted);margin:0 0 16px}
+  label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
+  label .req{color:var(--danger);margin-left:3px}
+  input[type=text],input[type=email],input[type=number],textarea,select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
+    font-size:15px;font-family:inherit;background:#fff;color:var(--text)}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(26,79,139,.12)}
+  textarea{min-height:80px;resize:vertical}
+  .hint{font-size:12px;color:var(--muted);margin-top:5px}
+  .event{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  .event .etitle{font-weight:700;font-size:15px;margin-bottom:2px}
+  .event .emeta{font-size:13px;color:var(--muted);margin-bottom:10px}
+  .choices{display:flex;gap:10px;flex-wrap:wrap}
+  .choice{flex:1;min-width:120px;position:relative}
+  .choice input{position:absolute;opacity:0;width:0;height:0}
+  .choice span{display:block;text-align:center;padding:10px;border:1.5px solid var(--line);
+    border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+  .choice input:checked + span{border-color:var(--primary);background:rgba(26,79,139,.08);color:var(--primary)}
+  .choice.no input:checked + span{border-color:var(--danger);background:rgba(192,57,43,.07);color:var(--danger)}
+  .guest{margin-top:10px;display:none}
+  .guest.show{display:block}
+  .submit{width:100%;padding:15px;background:var(--primary);color:#fff;border:none;
+    border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+  .submit:hover{background:var(--primary-dark)}
+  .submit:disabled{opacity:.6;cursor:not-allowed}
+  .err{color:var(--danger);font-size:13px;margin-top:6px;display:none}
+  .err.show{display:block}
+  #thanks{display:none;text-align:center;padding:50px 20px}
+  #thanks .check{width:64px;height:64px;border-radius:50%;background:var(--ok);
+    color:#fff;font-size:34px;line-height:64px;margin:0 auto 18px}
+  #thanks h2{color:var(--primary);margin:0 0 8px}
+  #thanks p{color:var(--muted);margin:0}
+  .footer{text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
+  .config-note{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;
+    padding:12px 14px;font-size:13px;color:#8a6d00;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ▼▼▼ 편집 영역: 행사 정보를 실제 내용으로 바꾸세요 ▼▼▼ -->
+  <script>
+    // === 1) Apps Script 웹앱 URL을 여기에 붙여넣으세요 (가이드 참고) ===
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnGR-wjD5ED1UhGOUzS3wOJA8kvJkJp2kLt319tQSmc92E07HYE86IS28gb3kNZqJk/exec";
+
+    // === 2) 사교행사 3개 정보 (실제 행사명/시간/장소로 교체) ===
+    const EVENTS = [
+      { id:"d0625", name:"[Welcome Dinner] (6월 25일, 목)", meta:"19:00 · 장소 코엑스 마곡 지하 2층 진진수라" },
+      { id:"d0626", name:"[Presidential Dinner] (6월 26일, 금)", meta:"18:30 · 장소 코엑스 마곡 지하 2층 스퀘어볼룸 A" },
+      { id:"d0627", name:"[Farewell Dinner] (6월 27일, 토)", meta:"18:30 · 장소 코엑스 마곡 지하 2층 푸에르코" },
+    ];
+  </script>
+  <!-- ▲▲▲ 편집 영역 끝 ▲▲▲ -->
+
+  <div class="header">
+    <span class="badge">PH KOREA 2026</span>
+    <h1>대한폐고혈압학회 학술대회<br>사교행사 참석 안내 (RSVP)</h1>
+    <p>코엑스 마곡 · 2026년 6월 26일(금)~27일(토)</p>
+  </div>
+
+  <div id="configNote" class="config-note" style="display:none">
+    ⚠️ 아직 Apps Script URL이 연결되지 않았습니다. 파일 상단의 <b>SCRIPT_URL</b>을 설정해 주세요.
+  </div>
+
+  <form id="rsvpForm" novalidate>
+
+    <div class="card">
+      <h2>참석자 정보</h2>
+      <p class="sub">초청해 주신 연자·좌장·패널 분들의 참석 여부를 확인합니다.</p>
+
+      <label>성함 <span class="req">*</span></label>
+      <input type="text" name="name" id="name" placeholder="홍길동" autocomplete="name">
+      <div class="err" id="err-name">성함을 입력해 주세요.</div>
+
+      <label>소속</label>
+      <input type="text" name="affiliation" placeholder="○○대학교병원 순환기내과">
+
+      <label>이메일 <span class="req">*</span></label>
+      <input type="email" name="email" id="email" placeholder="name@example.com" autocomplete="email">
+      <div class="err" id="err-email">올바른 이메일 형식을 입력해 주세요.</div>
+
+      <label>연자 코드 <span style="color:var(--muted);font-weight:400">(아는 경우)</span></label>
+      <input type="text" name="code" placeholder="예: SP1-1, SH2-4">
+      <div class="hint">프로그램에 안내된 코드입니다. 모르시면 비워두셔도 됩니다.</div>
+    </div>
+
+    <div class="card" id="eventsCard">
+      <h2>사교행사 참석 여부</h2>
+      <p class="sub">각 행사별로 참석 여부를 선택해 주세요.</p>
+      <div id="eventsList"></div>
+    </div>
+
+    <div class="card">
+      <h2>식이 및 기타 요청</h2>
+      <p class="sub">알레르기·채식 등 식사 관련 사항이나 전달 사항을 적어주세요.</p>
+
+      <label>식이 제한 / 알레르기</label>
+      <input type="text" name="dietary" placeholder="예: 채식, 견과류 알레르기, 해당 없음">
+
+      <label>기타 요청사항</label>
+      <textarea name="notes" placeholder="자유롭게 작성해 주세요."></textarea>
+    </div>
+
+    <button type="submit" class="submit" id="submitBtn">제출하기</button>
+    <p class="footer">문의: 학술프로그램 초청파트 담당자</p>
+  </form>
+
+  <div id="thanks">
+    <div class="check">✓</div>
+    <h2>제출이 완료되었습니다</h2>
+    <p>참석 여부를 알려주셔서 감사합니다.<br>추가 안내는 이메일로 전달드리겠습니다.</p>
+  </div>
+
+</div>
+
+<script>
+  // 행사 목록 렌더링
+  const list = document.getElementById('eventsList');
+  EVENTS.forEach((ev,i)=>{
+    const el = document.createElement('div');
+    el.className = 'event';
+    el.innerHTML = `
+      <div class="etitle">${ev.name}</div>
+      <div class="emeta">${ev.meta}</div>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="att_${ev.id}" value="참석"><span>참석</span></label>
+        <label class="choice no"><input type="radio" name="att_${ev.id}" value="불참"><span>불참</span></label>
+      </div>
+      <div class="guest" id="guest_${ev.id}">
+        <label>동반 인원 (본인 제외)</label>
+        <input type="number" name="guests_${ev.id}" min="0" max="10" value="0">
+      </div>`;
+    list.appendChild(el);
+  });
+
+  // 참석 선택 시 동반인원 표시
+  EVENTS.forEach(ev=>{
+    document.querySelectorAll(`input[name="att_${ev.id}"]`).forEach(r=>{
+      r.addEventListener('change',()=>{
+        const g = document.getElementById('guest_'+ev.id);
+        g.classList.toggle('show', r.value==='참석');
+      });
+    });
+  });
+
+  // URL 미설정 경고
+  if(SCRIPT_URL.indexOf('PASTE_')===0){
+    document.getElementById('configNote').style.display='block';
+  }
+
+  const form = document.getElementById('rsvpForm');
+  const btn = document.getElementById('submitBtn');
+
+  function showErr(id,on){ document.getElementById(id).classList.toggle('show',on); }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    showErr('err-name', !name);
+    showErr('err-email', !emailOk);
+    if(!name || !emailOk){ window.scrollTo({top:0,behavior:'smooth'}); return; }
+
+    btn.disabled = true; btn.textContent = '제출 중...';
+
+    // 응답 데이터 구성
+    const data = {
+      timestamp: new Date().toISOString(),
+      name, email,
+      affiliation: form.affiliation.value.trim(),
+      code: form.code.value.trim(),
+      dietary: form.dietary.value.trim(),
+      notes: form.notes.value.trim()
+    };
+    EVENTS.forEach(ev=>{
+      const sel = form.querySelector(`input[name="att_${ev.id}"]:checked`);
+      data['att_'+ev.id] = sel ? sel.value : '';
+      data['guests_'+ev.id] = sel && sel.value==='참석' ? form.querySelector(`input[name="guests_${ev.id}"]`).value : '';
+    });
+
+    try{
+      if(SCRIPT_URL.indexOf('PASTE_')!==0){
+        await fetch(SCRIPT_URL, {
+          method:'POST',
+          mode:'no-cors',
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          body: new URLSearchParams(data).toString()
+        });
+      }
+      form.style.display='none';
+      document.getElementById('thanks').style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }catch(err){
+      btn.disabled=false; btn.textContent='제출하기';
+      alert('제출 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  });
+</script>
+</body>
+</html>
