@@ -171,9 +171,9 @@
 
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const name = form.name.value.trim();
-    const affiliation = form.affiliation.value.trim();
-    const contact = form.contact.value.trim();
+    const name = form.elements['name'].value.trim();
+    const affiliation = form.elements['affiliation'].value.trim();
+    const contact = form.elements['contact'].value.trim();
     showErr('err-name', !name);
     showErr('err-affiliation', !affiliation);
     showErr('err-contact', !contact);
@@ -184,8 +184,7 @@
     // 응답 데이터 구성
     const data = {
       timestamp: new Date().toISOString(),
-      name, contact,
-      affiliation: form.affiliation.value.trim()
+      name, contact, affiliation
     };
     ACTIVE_EVENTS.forEach(ev=>{
       const sel = form.querySelector(`input[name="att_${ev.id}"]:checked`);
