@@ -28,7 +28,7 @@
   .card .sub{font-size:13px;color:var(--muted);margin:0 0 16px}
   label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
   label .req{color:var(--danger);margin-left:3px}
-  input[type=text],input[type=email],input[type=number],textarea,select{
+  input[type=text],input[type=email],input[type=tel],input[type=number],textarea,select{
     width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
     font-size:15px;font-family:inherit;background:#fff;color:var(--text)}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--primary);
@@ -100,33 +100,19 @@
       <input type="text" name="name" id="name" placeholder="홍길동" autocomplete="name">
       <div class="err" id="err-name">성함을 입력해 주세요.</div>
 
-      <label>소속</label>
-      <input type="text" name="affiliation" placeholder="○○대학교병원 순환기내과">
+      <label>소속 <span class="req">*</span></label>
+      <input type="text" name="affiliation" id="affiliation" placeholder="○○대학교병원 순환기내과">
+      <div class="err" id="err-affiliation">소속을 입력해 주세요.</div>
 
-      <label>이메일 <span class="req">*</span></label>
-      <input type="email" name="email" id="email" placeholder="name@example.com" autocomplete="email">
-      <div class="err" id="err-email">올바른 이메일 형식을 입력해 주세요.</div>
-
-      <label>연자 코드 <span style="color:var(--muted);font-weight:400">(아는 경우)</span></label>
-      <input type="text" name="code" placeholder="예: SP1-1, SH2-4">
-      <div class="hint">프로그램에 안내된 코드입니다. 모르시면 비워두셔도 됩니다.</div>
+      <label>연락처 <span class="req">*</span></label>
+      <input type="tel" name="contact" id="contact" placeholder="010-1234-5678" autocomplete="tel">
+      <div class="err" id="err-contact">연락처를 입력해 주세요.</div>
     </div>
 
     <div class="card" id="eventsCard">
       <h2>사교행사 참석 여부</h2>
       <p class="sub">각 행사별로 참석 여부를 선택해 주세요.</p>
       <div id="eventsList"></div>
-    </div>
-
-    <div class="card">
-      <h2>식이 및 기타 요청</h2>
-      <p class="sub">알레르기·채식 등 식사 관련 사항이나 전달 사항을 적어주세요.</p>
-
-      <label>식이 제한 / 알레르기</label>
-      <input type="text" name="dietary" placeholder="예: 채식, 견과류 알레르기, 해당 없음">
-
-      <label>기타 요청사항</label>
-      <textarea name="notes" placeholder="자유롭게 작성해 주세요."></textarea>
     </div>
 
     <button type="submit" class="submit" id="submitBtn">제출하기</button>
@@ -153,22 +139,8 @@
       <div class="choices">
         <label class="choice"><input type="radio" name="att_${ev.id}" value="참석"><span>참석</span></label>
         <label class="choice no"><input type="radio" name="att_${ev.id}" value="불참"><span>불참</span></label>
-      </div>
-      <div class="guest" id="guest_${ev.id}">
-        <label>동반 인원 (본인 제외)</label>
-        <input type="number" name="guests_${ev.id}" min="0" max="10" value="0">
       </div>`;
     list.appendChild(el);
-  });
-
-  // 참석 선택 시 동반인원 표시
-  EVENTS.forEach(ev=>{
-    document.querySelectorAll(`input[name="att_${ev.id}"]`).forEach(r=>{
-      r.addEventListener('change',()=>{
-        const g = document.getElementById('guest_'+ev.id);
-        g.classList.toggle('show', r.value==='참석');
-      });
-    });
   });
 
   // URL 미설정 경고
@@ -184,27 +156,24 @@
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const affiliation = form.affiliation.value.trim();
+    const contact = form.contact.value.trim();
     showErr('err-name', !name);
-    showErr('err-email', !emailOk);
-    if(!name || !emailOk){ window.scrollTo({top:0,behavior:'smooth'}); return; }
+    showErr('err-affiliation', !affiliation);
+    showErr('err-contact', !contact);
+    if(!name || !affiliation || !contact){ window.scrollTo({top:0,behavior:'smooth'}); return; }
 
     btn.disabled = true; btn.textContent = '제출 중...';
 
     // 응답 데이터 구성
     const data = {
       timestamp: new Date().toISOString(),
-      name, email,
-      affiliation: form.affiliation.value.trim(),
-      code: form.code.value.trim(),
-      dietary: form.dietary.value.trim(),
-      notes: form.notes.value.trim()
+      name, contact,
+      affiliation: form.affiliation.value.trim()
     };
     EVENTS.forEach(ev=>{
       const sel = form.querySelector(`input[name="att_${ev.id}"]:checked`);
       data['att_'+ev.id] = sel ? sel.value : '';
-      data['guests_'+ev.id] = sel && sel.value==='참석' ? form.querySelector(`input[name="guests_${ev.id}"]`).value : '';
     });
 
     try{
