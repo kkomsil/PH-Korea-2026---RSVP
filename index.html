@@ -128,9 +128,25 @@
 </div>
 
 <script>
+  // 노출할 행사 결정
+  //  - ?g=a → 6/26·27 대상 그룹, ?g=b → 6/26 대상 그룹
+  //  - 그룹을 늘리려면 GROUPS에 항목을 추가하세요.
+  //  - (참고) ?e=d0626,d0627 처럼 직접 지정도 계속 가능. 둘 다 없으면 전체 표시.
+  const GROUPS = {
+    a: ['d0626','d0627'],
+    b: ['d0626'],
+  };
+  const _params = new URLSearchParams(location.search);
+  const _g = (_params.get('g') || '').trim().toLowerCase();
+  const _e = _params.get('e');
+  let _wanted = null;
+  if (_g && GROUPS[_g]) _wanted = GROUPS[_g];
+  else if (_e) _wanted = _e.split(',').map(s=>s.trim()).filter(Boolean);
+  const ACTIVE_EVENTS = _wanted ? EVENTS.filter(ev=>_wanted.includes(ev.id)) : EVENTS;
+
   // 행사 목록 렌더링
   const list = document.getElementById('eventsList');
-  EVENTS.forEach((ev,i)=>{
+  ACTIVE_EVENTS.forEach((ev,i)=>{
     const el = document.createElement('div');
     el.className = 'event';
     el.innerHTML = `
@@ -171,7 +187,7 @@
       name, contact,
       affiliation: form.affiliation.value.trim()
     };
-    EVENTS.forEach(ev=>{
+    ACTIVE_EVENTS.forEach(ev=>{
       const sel = form.querySelector(`input[name="att_${ev.id}"]:checked`);
       data['att_'+ev.id] = sel ? sel.value : '';
     });
