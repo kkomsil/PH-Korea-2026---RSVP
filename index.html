@@ -155,7 +155,8 @@
       <div class="choices">
         <label class="choice"><input type="radio" name="att_${ev.id}" value="참석"><span>참석</span></label>
         <label class="choice no"><input type="radio" name="att_${ev.id}" value="불참"><span>불참</span></label>
-      </div>`;
+      </div>
+      <div class="err" id="err-att_${ev.id}">참석 또는 불참을 선택해 주세요.</div>`;
     list.appendChild(el);
   });
 
@@ -177,7 +178,16 @@
     showErr('err-name', !name);
     showErr('err-affiliation', !affiliation);
     showErr('err-contact', !contact);
-    if(!name || !affiliation || !contact){ window.scrollTo({top:0,behavior:'smooth'}); return; }
+
+    // 각 행사 참석여부 필수 선택 검증
+    let eventsOk = true;
+    ACTIVE_EVENTS.forEach(ev=>{
+      const picked = !!form.querySelector(`input[name="att_${ev.id}"]:checked`);
+      showErr('err-att_'+ev.id, !picked);
+      if(!picked) eventsOk = false;
+    });
+
+    if(!name || !affiliation || !contact || !eventsOk){ window.scrollTo({top:0,behavior:'smooth'}); return; }
 
     btn.disabled = true; btn.textContent = '제출 중...';
 
