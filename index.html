@@ -115,6 +115,14 @@
       <div id="eventsList"></div>
     </div>
 
+    <div class="card">
+      <h2>특이식단</h2>
+      <p class="sub">알레르기·채식 등 식사 관련 사항을 적어주세요.</p>
+
+      <label>식이 제한 / 알레르기</label>
+      <input type="text" name="dietary" placeholder="예: 채식, 견과류 알레르기, 해당 없음">
+    </div>
+
     <button type="submit" class="submit" id="submitBtn">제출하기</button>
     <p class="footer">문의: PH Korea 2026 준비사무국<br>sci.kphs@gmail.com</p>
   </form>
@@ -200,6 +208,7 @@
       const sel = form.querySelector(`input[name="att_${ev.id}"]:checked`);
       data['att_'+ev.id] = sel ? sel.value : '';
     });
+    data.dietary = form.elements['dietary'].value.trim();
 
     try{
       if(SCRIPT_URL.indexOf('PASTE_')!==0){
